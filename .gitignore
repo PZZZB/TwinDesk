@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+artifacts/
+.artifacts/
+engine/
+.vs/
+*.user
+*.pem
+*.pfx
+*.p12
+.env
+.env.*
