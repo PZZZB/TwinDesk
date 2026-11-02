@@ -10,4 +10,4 @@ TwinDesk starts the unmodified Deskflow 1.27.0 native engine as a separate proce
 - Windows x64 package: https://github.com/deskflow/deskflow/releases/download/v1.27.0/deskflow-1.27.0-win-x64-portable.zip
 - Package SHA-256: `8d19004cc3625623489d96580c1b58fd13ee78185689907fd4478595f93fab9a`
 
-The engine package also contains its required Qt, OpenSSL, and Microsoft runtime libraries. Keep the complete upstream package and its notices together when redistributing it. TwinDesk's desktop interface uses Avalonia and retains its NuGet package licenses and dependency metadata during publishing.
+The engine package also contains its required Qt, OpenSSL, and Microsoft runtime libraries. Keep the complete upstream package and its notices together when redistributing it. TwinDesk's desktop interface uses Avalonia and restores its dependencies through NuGet. The current packaging script does not collect the NuGet dependencies' license texts into the published application directory.
