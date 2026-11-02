@@ -4,6 +4,14 @@
 
 这是第一版桌面原型。界面使用 C# / Avalonia，键鼠捕获和输入由独立运行的 Deskflow 1.27.0 引擎完成。没有重新实现底层驱动。
 
+## 下载
+
+从 [GitHub Releases](https://github.com/PZZZB/TwinDesk/releases) 下载对应系统的发布包。
+
+- Windows x64：安装版为 `TwinDesk-0.1.0-win-x64.msi`，安装到当前用户目录并创建开始菜单快捷方式；免安装版为 `TwinDesk-0.1.0-win-x64.zip`，解压后打开 `TwinDesk.App.exe`。
+- macOS / Linux：下载对应架构的 ZIP，按下方平台要求准备 Deskflow 1.27.0 引擎。
+- `SHA256SUMS.txt` 包含发布文件的 SHA-256。Windows 包内已包含自带运行时和输入引擎，不需要另装 .NET。
+
 ## 当前功能
 
 - 提供端、接收端可设置，两台电脑各运行一份程序。
@@ -57,6 +65,14 @@ pwsh -File scripts/Publish.ps1 -Runtime win-x64
 ```
 
 `Publish.ps1` 支持 `win-x64`、`linux-x64`、`linux-arm64`、`osx-x64`、`osx-arm64`。Windows 包会下载并核对固定版本的官方引擎 SHA-256；其他平台包需要安装该平台的官方引擎。输出在 `artifacts/packages`。
+
+构建 Windows 安装版：
+
+```powershell
+pwsh -File scripts/Build-WindowsInstaller.ps1 -Version 0.1.0
+```
+
+该脚本使用固定版本的 WiX 5.0.2，将工具放在本项目的 `.artifacts` 中。先运行 Windows 的 `Publish.ps1`，再构建 MSI。安装版保留用户配置目录；卸载软件不会清除两台电脑的配对身份。
 
 仓库包含源码、测试和打包脚本。首次从源码运行时，需要准备 Deskflow 1.27.0 引擎；Windows 可先执行上面的打包命令，程序会在本项目的 `engine` 目录中找到已校验的官方便携引擎。
 

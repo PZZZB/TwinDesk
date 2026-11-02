@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="TwinDesk" Manufacturer="TwinDesk" Version="$(var.ProductVersion)"
+           UpgradeCode="3711AF1C-2788-4B20-96D7-041CB388E2E7" Language="1033"
+           Scope="perUser" InstallerVersion="500">
+    <SummaryInformation Description="TwinDesk keyboard and mouse sharing" />
+    <MajorUpgrade AllowSameVersionUpgrades="yes" Schedule="afterInstallInitialize"
+                  DowngradeErrorMessage="A newer version of TwinDesk is already installed." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+    <Property Id="ARPPRODUCTICON" Value="TwinDeskIcon" />
+    <Icon Id="TwinDeskIcon" SourceFile="$(var.ApplicationIcon)" />
+
+    <StandardDirectory Id="LocalAppDataFolder">
+      <Directory Id="TWINDESKPROGRAMSFOLDER" Name="Programs">
+        <Directory Id="INSTALLFOLDER" Name="TwinDesk" />
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="TwinDesk">
+        <Component Id="ApplicationShortcut" Guid="D82AA7D6-4972-41DF-BA34-F2DFD04B59D1" Bitness="always64">
+          <Shortcut Id="StartMenuShortcut" Name="TwinDesk" Target="[INSTALLFOLDER]TwinDesk.App.exe"
+                    WorkingDirectory="INSTALLFOLDER" Icon="TwinDeskIcon" />
+          <RemoveFolder Id="RemoveStartMenuFolder" On="uninstall" />
+          <!-- Only empty installer directories are removed. The separate LocalAppData/TwinDesk profile is not authored. -->
+          <RemoveFolder Id="RemoveProgramsFolder" Directory="TWINDESKPROGRAMSFOLDER" On="uninstall" />
+          <RegistryValue Root="HKCU" Key="Software\TwinDesk\Installer" Name="StartMenuInstalled"
+                         Type="integer" Value="1" KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+    <Feature Id="MainFeature" Title="TwinDesk" Level="1">
+      <ComponentGroupRef Id="PublishedPayload" />
+      <ComponentRef Id="ApplicationShortcut" />
+    </Feature>
+  </Package>
+</Wix>

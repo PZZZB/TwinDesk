@@ -1,16 +1,18 @@
 param(
     [ValidateSet('win-x64', 'linux-x64', 'linux-arm64', 'osx-x64', 'osx-arm64')]
-    [string]$Runtime = 'win-x64'
+    [string]$Runtime = 'win-x64',
+    [ValidatePattern('^\d+\.\d+\.\d+$')]
+    [string]$Version = '0.1.0'
 )
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $packages = Join-Path $projectRoot 'artifacts\packages'
-$packageName = "TwinDesk-0.1.0-$Runtime"
+$packageName = "TwinDesk-$Version-$Runtime"
 $destination = Join-Path $packages $packageName
 New-Item -ItemType Directory -Path $packages -Force | Out-Null
 
-& dotnet publish (Join-Path $projectRoot 'src\TwinDesk.App\TwinDesk.App.csproj') -c Release -r $Runtime --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o $destination
+& dotnet publish (Join-Path $projectRoot 'src\TwinDesk.App\TwinDesk.App.csproj') -c Release -r $Runtime --self-contained true "-p:Version=$Version" -p:PublishSingleFile=false -p:PublishTrimmed=false -p:DebugType=none -p:DebugSymbols=false -p:ContinuousIntegrationBuild=true -o $destination
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed: $LASTEXITCODE" }
 
 foreach ($name in @('README.md', '双机测试.md', 'THIRD-PARTY-NOTICES.md')) {
@@ -36,6 +38,8 @@ if ($Runtime -eq 'win-x64') {
     New-Item -ItemType Directory -Path $engineDestination -Force | Out-Null
     Copy-Item -LiteralPath $engineSource -Destination $engineDestination -Recurse -Force
 }
+
+& (Join-Path $PSScriptRoot 'Collect-ThirdPartyLicenses.ps1') -PublishedDirectory $destination -Runtime $Runtime
 
 $zipPath = Join-Path $packages "$packageName.zip"
 Compress-Archive -LiteralPath $destination -DestinationPath $zipPath -Force
